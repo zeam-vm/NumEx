@@ -5,30 +5,21 @@ defmodule Numex do
   """
 
   @doc """
-  Hello world.
 
   ## Examples
+    iex> Numex.add([[1, 2], [3, 4]], [[5, 6], [7, 8]])
+    [[6,8],[10,12]]
+ """
 
-      iex> Numex.hello
-      :world
-
-  """
-  def hello do
-    :world
-  end
-
-  """
-  def zeros(list, num) do
-    if num != 0 do
-      list ++ [zeros(list, num-1)]
-    else
-
-    end
-  end
-  """
   # 要素ごとの加算
-  def add([a|tail1], [b|tail2]) do
-    [a+b|add(tail1, tail2)] 
+  def add([a|tla], [b|tlb]) when not is_list(a) do
+    [a+b|add(tla, tlb)] 
+  end
+
+  def add([a|tla], [b|tlb]) when is_list(a) do
+   IO.inspect tla, char_lists: :as_lists
+   IO.inspect tlb, char_lists: :as_charlists
+   [add(a,b)|add(tla, tlb)]
   end
 
   def add([], []), do: []
@@ -38,15 +29,16 @@ defmodule Numex do
   def prd([a|tail1], [b|tail2]) do
     [a*b|prd(tail1, tail2)]
   end
-
   def prd([], []), do: []
   
-  def dot([a|tail1],[b|tail2]) do
-      
+  def dot([hda|tla],[hdb|tlb]) do
+    (hda*hdb)+dot(tla,tlb)
   end
 
-  def dot(num, [], []) , do: []
-end
+  def dot([],[]), do: 0
 
-#Numex.add(,[1, 2, 3], [2, 3, 4])
-#Numex.prd([1, 2, 3], [4, 5, 6])
+  def sum([hd|tl]) do
+   (hd)+sum(tl) 
+  end
+  def sum([]), do: 0
+end
