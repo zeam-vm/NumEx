@@ -10,16 +10,54 @@ defmodule Numex do
     iex> Numex.add([[1, 2], [3, 4]], [[5, 6], [7, 8]])
     [[6,8],[10,12]]
  """
+  def timed(func) do
+    func
+    |> :timer.tc
+    |> elem(0) 
+    |> Kernel./(1000000)
+  end
+  
+  def timed_recursive() do
+    :timer.tc( fn -> 
+      1..10000000 
+      |> Enum.to_list 
+      |> Numex.twice end )
+      |> elem(0) 
+      |> Kernel./(1000000)
+  end
+
+  def timed_enum() do
+    :timer.tc( fn -> 
+      1..10000000 
+      |> Enum.to_list 
+      |> Enum.map(& &1 * 2 ) end )
+      |> elem(0) 
+      |> Kernel./(1000000)
+  end
+  
+  def timed_flow(stage) do
+    :timer.tc(fn -> 
+    1..10000000 
+    |> Flow.from_enumerable(stages: stage) 
+    |> Flow.map(& &1 * 2) 
+    |> Enum.to_list end) 
+    |> elem(0) 
+    |> Kernel./(1000000)
+  end
 
   # 要素ごとの加算
   def add([a|tla], [b|tlb]) when not is_list(a) do
     [a+b|add(tla, tlb)] 
   end
 
+  # 要素ごと2倍
+  def twice([a|tla]) when not is_list(a) do
+    [2*a|twice( tla)] 
+  end
+  def twice([]), do: [] 
+
   def add([a|tla], [b|tlb]) when is_list(a) do
-   IO.inspect tla, char_lists: :as_lists
-   IO.inspect tlb, char_lists: :as_charlists
-   [add(a,b)|add(tla, tlb)]
+    [add(a,b)|add(tla, tlb)]
   end
 
   def add([], []), do: []
